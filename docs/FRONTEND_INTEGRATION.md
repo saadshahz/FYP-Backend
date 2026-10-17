@@ -6,20 +6,24 @@ boundary; frontend checks should only control presentation.
 
 ## Base URL and documentation
 
-The default backend port is `3000` (`PORT` can override it):
+The API port is configured by `PORT`. The checked-in backend example uses port
+`5000`; the server falls back to `3000` only when `PORT` is unset:
 
 ```text
-NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1
+NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 ```
 
 Use the same-origin API proxy in deployed frontend environments where possible.
-Interactive docs are at `http://localhost:3000/api/docs`; the raw OpenAPI document
-is at `http://localhost:3000/api/docs/openapi.json`. The health check is
+With the example port, interactive docs are at `http://localhost:5000/api/docs`;
+the raw OpenAPI document is at `http://localhost:5000/api/docs/openapi.json`.
+The health check is
 `GET /api/v1/health`.
 
-The backend does not currently configure CORS or rate limiting. A browser app
-served from another origin needs a same-origin proxy or a separately reviewed,
-explicit CORS configuration before direct browser requests will work.
+The backend does not currently configure rate limiting. CORS allows only the
+exact comma-separated origins in `FRONTEND_ORIGINS` (default:
+`http://localhost:3000`) and the required API methods and `Authorization` /
+`Content-Type` headers. Set the deployed frontend's exact origin in the backend
+environment; wildcard origins and credentialed CORS are not enabled.
 
 ## Authentication
 
@@ -40,7 +44,7 @@ invalid-token `401`, send the user through login again.
 
 ```js
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
 
 async function apiRequest(path, { token, ...options } = {}) {
   const response = await fetch(`${API_URL}${path}`, {

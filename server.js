@@ -60,6 +60,7 @@ async function start() {
     });
 
     console.log(`API server listening on port ${port}`);
+    console.log(`API server documentation available at http://localhost:${port}/api/docs`);
   } catch (error) {
     if (
       error &&
